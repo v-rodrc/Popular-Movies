@@ -51,16 +51,14 @@ private Context mContext;
 
         @Override
         public void onBindViewHolder(final MovieAdapter.NumberViewHolder holder, int position) {
-            holder.title.setText(movieList.get(position).getTitle());
-            String rating = Double.toString(movieList.get(position).getVoteAverage());
-holder.rating.setText(rating);
 
-        String poster = "https://image.tmdb.org/t/p/w500" + movieList.get(position);
+
+        String poster = "https://image.tmdb.org/t/p/w500" + movieList.get(position).getPosterPath();
 
 
             Glide.with(mContext)
-                    .load(movieList.get(position).getPosterPath())
-                    .placeholder(R.drawable.ic_launcher_background)
+                    .load(poster)
+                    .placeholder(R.drawable.ic_launcher_foreground)
                     .into(holder.posterthumbnail);
         }
 
@@ -84,8 +82,7 @@ holder.rating.setText(rating);
 
             public NumberViewHolder(View itemView) {
                 super(itemView);
-title = (TextView) itemView.findViewById(R.id.movie_title);
-rating = (TextView) itemView.findViewById(R.id.rating);
+
                 posterthumbnail = (ImageView) itemView.findViewById(R.id.tv_item_number);
 
                 itemView.setOnClickListener(new View.OnClickListener() {
