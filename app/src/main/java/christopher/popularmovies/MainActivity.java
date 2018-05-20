@@ -19,14 +19,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity
-{
+public class MainActivity extends AppCompatActivity {
 
 
     private MovieAdapter mAdapter;
     private RecyclerView recyclerView;
     private List<Movie> movieList;
-
 
 
     @Override
@@ -40,54 +38,48 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-        private void loadViews () {
-            recyclerView = (RecyclerView) findViewById(R.id.rv_numbers);
+    private void loadViews() {
+        recyclerView = (RecyclerView) findViewById(R.id.rv_numbers);
 
-            movieList = new ArrayList<>();
-            mAdapter = new MovieAdapter(this, movieList);
-
-
-            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2);
-            recyclerView.setLayoutManager(layoutManager);
-
-recyclerView.setItemAnimator(new DefaultItemAnimator());
+        movieList = new ArrayList<>();
+        mAdapter = new MovieAdapter(this, movieList);
 
 
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2);
+        recyclerView.setLayoutManager(layoutManager);
 
-            recyclerView.setAdapter(mAdapter);
-            mAdapter.notifyDataSetChanged();
-        }
-
-
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
-        private void parseJson(){
+        recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+    }
 
-         RetrofitClient client  = new RetrofitClient();
+
+    private void parseJson() {
+
+        RetrofitClient client = new RetrofitClient();
 
         ApiService apiService = client.getClient().create(ApiService.class);
 
         Call<ApiResponse> call = apiService.getMovies(BuildConfig.THE_MOVIE_DB_API_TOKEN);
 
-call.enqueue(new Callback<ApiResponse>() {
-    @Override
-    public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-        List<Movie> movies = response.body().getResults();
+        call.enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                List<Movie> movies = response.body().getResults();
 
 
-        recyclerView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
-        recyclerView.smoothScrollToPosition(0);
+                recyclerView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
+                recyclerView.smoothScrollToPosition(0);
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_LONG).show();
+            }
+        });
     }
-
-    @Override
-    public void onFailure(Call<ApiResponse> call, Throwable t) {
-        Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_LONG).show();
-    }
-});
-}
-
-
-
 
 
     @Override
@@ -108,7 +100,7 @@ call.enqueue(new Callback<ApiResponse>() {
              * ways of doing this, with this one being the simplest of those
              * ways. (in our humble opinion)
              */
-            case R.id.action_refresh:
+            case R.id.settings:
                 // COMPLETED (14) Pass in this as the ListItemClickListener to the GreenAdapter constructor
 
                 return true;
@@ -116,7 +108,6 @@ call.enqueue(new Callback<ApiResponse>() {
 
         return super.onOptionsItemSelected(item);
     }
-
 
 
 }
