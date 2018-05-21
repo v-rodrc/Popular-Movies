@@ -53,11 +53,12 @@ public class DetailActivity extends AppCompatActivity {
 
         Glide.with(this)
                 .load(image)
+                .placeholder(R.drawable.ic_launcher_foreground)
                 .into(posterImage);
 
         movieTitle.setText(title);
         releaseDate.setText(release);
-        userRating.setText(rating.toString());
+        userRating.setText(rating.toString() + " / 10");
         overview.setText(synopsis);
 
 

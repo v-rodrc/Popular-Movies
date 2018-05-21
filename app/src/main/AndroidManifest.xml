@@ -19,7 +19,16 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".DetailActivity"></activity>
+        <activity
+            android:name=".DetailActivity"
+            android:parentActivityName=".MainActivity"
+            android:label="Movie Info"
+            android:launchMode="singleTop"></activity>
+
+
+        <activity
+            android:name=".Settings"
+            android:label="Settings"></activity>
     </application>
 
 </manifest>

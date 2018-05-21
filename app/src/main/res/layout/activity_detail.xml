@@ -23,31 +23,53 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp" />
 
+
                 <TextView
                     android:id="@+id/movie_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp" />
+                    android:textStyle="bold"
+                    android:layout_marginTop="20dp"
+                    android:textSize="30sp"
+                    android:gravity="center"
+                    android:textAppearance="?android:textAppearanceLarge"></TextView>
 
                 <TextView
-                    android:id="@+id/rating"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp" />
+                    android:text="Release Date"
+                    style="@style/LabelsStyle" />
 
                 <TextView
                     android:id="@+id/releasedate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp" />
+                    style="@style/DetailsStyle" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Overview"
+                    style="@style/LabelsStyle" />
 
                 <TextView
                     android:id="@+id/overview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginTop="20dp" />
+                    style="@style/DetailsStyle" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Rating"
+                    style="@style/LabelsStyle" />
+
+                <TextView
+                    android:id="@+id/rating"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/DetailsStyle"
+                    android:layout_marginTop="20dp" />
 
             </LinearLayout>
         </ScrollView>

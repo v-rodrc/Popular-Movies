@@ -1,6 +1,9 @@
 package christopher.popularmovies;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,7 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 
     private MovieAdapter mAdapter;
@@ -34,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         loadViews();
-        parseJson();
+        sorting();
     }
 
 
@@ -72,11 +75,15 @@ public class MainActivity extends AppCompatActivity {
 
                 recyclerView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
                 recyclerView.smoothScrollToPosition(0);
+
+                Toast.makeText(MainActivity.this, "Sorting by most popular", Toast.LENGTH_SHORT).show();
+
+
             }
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Network Connection Error", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -84,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -101,15 +108,73 @@ public class MainActivity extends AppCompatActivity {
              * ways. (in our humble opinion)
              */
             case R.id.settings:
-                // COMPLETED (14) Pass in this as the ListItemClickListener to the GreenAdapter constructor
-
+                Intent intent = new Intent(this, Settings.class);
+                startActivity(intent);
                 return true;
-        }
 
+
+        }
         return super.onOptionsItemSelected(item);
+
+    }
+
+    private void parseJsonHighestRated() {
+
+        RetrofitClient client = new RetrofitClient();
+
+        ApiService apiService = client.getClient().create(ApiService.class);
+
+        Call<ApiResponse> call = apiService.getTopMovies(BuildConfig.THE_MOVIE_DB_API_TOKEN);
+
+        call.enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                List<Movie> movies = response.body().getResults();
+
+
+                recyclerView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
+                recyclerView.smoothScrollToPosition(0);
+
+                Toast.makeText(MainActivity.this, "Sorting by top rated", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Network Error", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        sorting();
+    }
+
+    private void sorting() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String order = sharedPreferences.getString(
+                this.getString(R.string.preference_order_key),
+                this.getString(R.string.preference_popular)
+        );
+        if (order.equals(this.getString(R.string.preference_popular))) {
+
+            parseJson();
+        } else {
+
+            parseJsonHighestRated();
+        }
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+
+    }
 }
 
 

@@ -68,7 +68,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
 
     class NumberViewHolder extends RecyclerView.ViewHolder {
 
-        // Will display the position in the list, ie 0 through getItemCount() - 1
+
 
         TextView title;
         TextView rating;
@@ -90,7 +90,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
                     intent.putExtra("title", movieList.get(clickedPosition).getOriginalTitle());
                     intent.putExtra("image", "https://image.tmdb.org/t/p/w500" + movieList.get(clickedPosition).getPosterPath());
                     intent.putExtra("overview", movieList.get(clickedPosition).getOverview());
-                    intent.putExtra("average_rating", movieList.get(clickedPosition).getPopularity());
+                    intent.putExtra("average_rating", movieList.get(clickedPosition).getVoteAverage());
                     intent.putExtra("release", movieList.get(clickedPosition).getReleaseDate());
 
 

@@ -1,7 +1,5 @@
 package christopher.popularmovies.Utils;
 
-import java.util.List;
-
 import christopher.popularmovies.Model.ApiResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -15,6 +13,6 @@ public interface ApiService {
 Call<ApiResponse> getMovies(@Query("api_key") String apiKey);
 
     @GET("movie/top_rated")
-    Call<List<ApiResponse>> getTopMovies(@Query("api_key") String apiKey);
+    Call<ApiResponse> getTopMovies(@Query("api_key") String apiKey);
 }
 
