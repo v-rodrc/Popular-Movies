@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         ApiService apiService = client.getClient().create(ApiService.class);
 
-        Call<ApiResponse> call = apiService.getMovies(BuildConfig.THE_MOVIE_DB_API_TOKEN);
+        Call<ApiResponse> call = apiService.getMovies(BuildConfig.MOVIE_DB_API);
 
         call.enqueue(new Callback<ApiResponse>() {
             @Override
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         ApiService apiService = client.getClient().create(ApiService.class);
 
-        Call<ApiResponse> call = apiService.getTopMovies(BuildConfig.THE_MOVIE_DB_API_TOKEN);
+        Call<ApiResponse> call = apiService.getTopMovies(BuildConfig.MOVIE_DB_API);
 
         call.enqueue(new Callback<ApiResponse>() {
             @Override
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Network Error", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Network Connection Error", Toast.LENGTH_LONG).show();
             }
         });
     }
