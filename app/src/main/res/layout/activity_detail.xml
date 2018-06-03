@@ -34,11 +34,6 @@
                     android:gravity="center"
                     android:textAppearance="?android:textAppearanceLarge"></TextView>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Release Date"
-                    style="@style/LabelsStyle" />
 
                 <TextView
                     android:id="@+id/releasedate"
@@ -47,22 +42,11 @@
                     style="@style/DetailsStyle" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Overview"
-                    style="@style/LabelsStyle" />
-
-                <TextView
                     android:id="@+id/overview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/DetailsStyle" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Rating"
-                    style="@style/LabelsStyle" />
 
                 <TextView
                     android:id="@+id/rating"
@@ -71,6 +55,20 @@
                     style="@style/DetailsStyle"
                     android:layout_marginTop="20dp" />
 
+                <TextView
+                    android:id="@+id/trailer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/LabelsStyle"
+                    android:text="Trailer"
+                    android:layout_marginTop="20dp" />
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_trailers"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical" />
             </LinearLayout>
         </ScrollView>
 

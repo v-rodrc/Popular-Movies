@@ -24,6 +24,7 @@ public class Movie {
     @SerializedName("vote_average")
     private Double voteAverage;
 
+
     public String getPosterPath() {
         return posterPath;
     }
@@ -97,6 +98,7 @@ public class Movie {
     public void setVoteAverage(Double voteAverage) {
         this.voteAverage = voteAverage;
     }
+
 
     public Movie() {
 

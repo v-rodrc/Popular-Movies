@@ -7,7 +7,7 @@
     <string name="releaseDate">Release Date</string>
     <string name="rating">Rating</string>
     <string name="poster">Poster</string>
-
+    <string name="trailer">Trailer</string>
     <string name="preference_popular">Populartiy</string>
     <string name="preference_sort_label">Sort order of movies</string>
     <string name="preference_order_key">sortOrderMovies</string>
