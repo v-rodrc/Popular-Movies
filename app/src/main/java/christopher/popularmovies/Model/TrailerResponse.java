@@ -23,7 +23,5 @@ public class TrailerResponse {
         return trailerResults;
     }
 
-    public void setTrailerResults(List<TrailerModel> trailerResults) {
-        this.trailerResults = trailerResults;
-    }
+
 }

@@ -17,6 +17,8 @@ import java.util.List;
 
 import christopher.popularmovies.Data.MovieContract;
 import christopher.popularmovies.Model.Movie;
+import christopher.popularmovies.Model.ReviewModel;
+import christopher.popularmovies.Model.ReviewResponse;
 import christopher.popularmovies.Model.TrailerModel;
 import christopher.popularmovies.Model.TrailerResponse;
 import christopher.popularmovies.Utils.ApiService;
@@ -38,7 +40,10 @@ public class DetailActivity extends AppCompatActivity {
    String synopsis;
    Double rating;
    String release;
-    int id;
+    String userReviews;
+    int idTrailer;
+    int idReview;
+    int idContentReview;
 
 
     private List<Movie> movieList;
@@ -46,6 +51,11 @@ public class DetailActivity extends AppCompatActivity {
     private RecyclerView trailerRecyclerView;
     private TrailerAdapter adapter;
     private List<TrailerModel> trailerModelList;
+
+
+    private RecyclerView reviewRecyclerView;
+    private ReviewAdapter reviewAdapter;
+    private List<ReviewModel> reviewModelList;
 
 
     @Override
@@ -68,7 +78,11 @@ public class DetailActivity extends AppCompatActivity {
         rating = getIntent().getExtras().getDouble("average_rating");
         release = getIntent().getExtras().getString("release");
 
-        id = getIntent().getExtras().getInt("trailerId");
+        idTrailer = getIntent().getExtras().getInt("trailerId");
+        idReview = getIntent().getExtras().getInt("reviewId");
+        idContentReview = getIntent().getExtras().getInt("reviewContentId");
+
+
 
         Glide.with(this)
                 .load(image)
@@ -82,7 +96,11 @@ public class DetailActivity extends AppCompatActivity {
 
         loadViews();
 
+        loadViewsReview();
+
         parseJson();
+
+        parseJsonReview();
     }
 
     private void loadViews() {
@@ -101,7 +119,7 @@ public class DetailActivity extends AppCompatActivity {
 
         ApiService apiService = client.getClient().create(ApiService.class);
 
-        Call<TrailerResponse> call = apiService.getTrailer(id, BuildConfig.MOVIE_DB_API);
+        Call<TrailerResponse> call = apiService.getTrailer(idTrailer, BuildConfig.MOVIE_DB_API);
         call.enqueue(new Callback<TrailerResponse>() {
             @Override
             public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
@@ -115,6 +133,38 @@ public class DetailActivity extends AppCompatActivity {
                 Toast.makeText(DetailActivity.this, "Network Connection Error", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void loadViewsReview() {
+        reviewModelList = new ArrayList<>();
+        reviewAdapter = new ReviewAdapter(this, reviewModelList);
+
+        reviewRecyclerView = (RecyclerView) (findViewById(R.id.rv_reviews));
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        reviewRecyclerView.setLayoutManager(layoutManager);
+        reviewRecyclerView.setAdapter(adapter);
+        reviewAdapter.notifyDataSetChanged();
+    }
+
+    private void parseJsonReview() {
+        RetrofitClient client = new RetrofitClient();
+
+        ApiService apiService = client.getClient().create(ApiService.class);
+        Call<ReviewResponse> call = apiService.getReviews(idReview, BuildConfig.MOVIE_DB_API);
+        call.enqueue(new Callback<ReviewResponse>() {
+            @Override
+            public void onResponse(Call<ReviewResponse> call, Response<ReviewResponse> response) {
+                List<ReviewModel> review = response.body().getReviewResults();
+                reviewRecyclerView.setAdapter(new ReviewAdapter(getApplicationContext(), review));
+                reviewRecyclerView.smoothScrollToPosition(0);
+            }
+
+            @Override
+            public void onFailure(Call<ReviewResponse> call, Throwable t) {
+                Toast.makeText(DetailActivity.this, "Network Connection Error", Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     public Cursor loadInBackground() {
