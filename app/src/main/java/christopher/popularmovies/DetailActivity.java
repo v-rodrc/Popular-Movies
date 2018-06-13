@@ -60,6 +60,8 @@ public class DetailActivity extends AppCompatActivity {
     int idReview;
     int idContentReview;
 
+    Boolean isFavorite = false;
+
 
     private List<Movie> movieList;
 
@@ -232,8 +234,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public void saveToFavorites(View v) {
         final Movie movie = new Movie();
-        Boolean isFavorite;
-        isFavorite = false;
+
 
         if (!isFavorite) {
             favorite.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favoritefilled));
@@ -247,11 +248,12 @@ public class DetailActivity extends AppCompatActivity {
                 }
 
             });
-        } else {
+
+        } else if (isFavorite = true) {
             favorite.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favorite));
             Toast.makeText(getApplicationContext(), "Movie being removed from favorites", Toast.LENGTH_SHORT).show();
-            isFavorite = false;
 
+            isFavorite = false;
             AppExecutors.getsInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {

@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         sorting();
 
         setUpViewModel();
+
+        sortByFavorite();
     }
 
 
@@ -190,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             @Override
             public void onChanged(@Nullable List<Movie> movies) {
                 movieList = movies;
-                Log.d(TAG, "Updating movies from LiveData in ViewModel");
+                Log.d(TAG, "Showing list of favorite movies");
                 mAdapter.setMovies((ArrayList<Movie>) movies);
             }
         });
