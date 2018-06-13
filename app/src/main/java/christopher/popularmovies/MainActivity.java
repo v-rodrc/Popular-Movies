@@ -1,13 +1,17 @@
 package christopher.popularmovies;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -15,6 +19,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import christopher.popularmovies.Data.Database;
+import christopher.popularmovies.Data.MainViewModel;
 import christopher.popularmovies.Model.ApiResponse;
 import christopher.popularmovies.Model.Movie;
 import christopher.popularmovies.Utils.ApiService;
@@ -29,6 +35,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private RecyclerView recyclerView;
     private List<Movie> movieList;
 
+    private static String TAG = "101";
+
+    private Database movieDatabase;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         loadViews();
         sorting();
+
+        setUpViewModel();
     }
 
 
@@ -160,12 +172,28 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (order.equals(this.getString(R.string.preference_popular))) {
 
             parseJson();
-        } else {
+        } else if (order.equals(this.getString(R.string.preference_rating))) {
 
             parseJsonHighestRated();
+        } else if (order.equals(this.getString(R.string.preference_favorites))) {
+            sortByFavorite();
         }
-
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    private void sortByFavorite() {
+        final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+
+
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                movieList = movies;
+                Log.d(TAG, "Updating movies from LiveData in ViewModel");
+                mAdapter.setMovies((ArrayList<Movie>) movies);
+            }
+        });
     }
 
 
@@ -175,8 +203,23 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 
     }
-}
 
+    private void setUpViewModel() {
+        final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+
+
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                movieList = movies;
+                Log.d(TAG, "Updating movies from LiveData in ViewModel");
+                mAdapter.setMovies((ArrayList<Movie>) movies);
+            }
+        });
+
+    }
+}
 
 
 

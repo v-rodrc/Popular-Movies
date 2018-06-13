@@ -12,6 +12,8 @@
     <string name="preference_sort_label">Sort order of movies</string>
     <string name="preference_order_key">sortOrderMovies</string>
     <string name="preference_rating">Ratings</string>
-    <string name="preference_summary">Change order of movies based on Popularity or Average Votes</string>
+    <string name="preference_summary">Change order of movies based on Popularity, Average Votes, or Favorites</string>
+
+    <string name="preference_favorites">Favorites</string>
 
 </resources>

@@ -1,7 +1,11 @@
 package christopher.popularmovies.Model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "movie_table")
 public class Movie {
 
 
@@ -11,6 +15,7 @@ public class Movie {
     private String overview;
     @SerializedName("release_date")
     private String releaseDate;
+    @PrimaryKey(autoGenerate = true)
     @SerializedName("id")
     private Integer id;
     @SerializedName("original_title")

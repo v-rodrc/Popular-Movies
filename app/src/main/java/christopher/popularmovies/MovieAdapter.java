@@ -69,7 +69,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
     class NumberViewHolder extends RecyclerView.ViewHolder {
 
 
-
         TextView title;
         TextView rating;
         ImageView posterthumbnail;
@@ -103,5 +102,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
             });
         }
 
+    }
+
+    public void setMovies(List<Movie> movieEntries) {
+        movieList = movieEntries;
+        notifyDataSetChanged();
     }
 }
