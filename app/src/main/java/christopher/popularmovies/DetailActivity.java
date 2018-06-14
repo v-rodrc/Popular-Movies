@@ -71,6 +71,8 @@ public class DetailActivity extends AppCompatActivity {
 
     Boolean isFavorite = false;
 
+    Movie movie;
+
 
     private List<Movie> movieList;
 
@@ -123,6 +125,7 @@ public class DetailActivity extends AppCompatActivity {
         userRating.setText(rating.toString() + " / 10");
         overview.setText(synopsis);
 
+        movie = new Movie(id, title, image, synopsis, rating, release);
 
         loadViews();
 
@@ -239,10 +242,6 @@ public class DetailActivity extends AppCompatActivity {
 
     public void saveToFavorites(View v) {
 
-
-        final Movie movies = new Movie(id, title, image, synopsis, rating, release);
-
-
         if (!isFavorite) {
             favorite.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favoritefilled));
             Toast.makeText(getApplicationContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show();
@@ -251,8 +250,8 @@ public class DetailActivity extends AppCompatActivity {
             AppExecutors.getsInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    if (movies == null)
-                        movieDatabase.daoAccess().insertMovie(movies);
+                    if (movie == null)
+                        movieDatabase.daoAccess().insertMovie(movie);
                 }
 
             });
@@ -265,7 +264,7 @@ public class DetailActivity extends AppCompatActivity {
             AppExecutors.getsInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    movieDatabase.daoAccess().deleteMovie(movies);
+                    movieDatabase.daoAccess().deleteMovie(movie);
                 }
             });
         }
