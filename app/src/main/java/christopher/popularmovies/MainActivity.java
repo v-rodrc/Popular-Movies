@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
     private MovieAdapter mAdapter;
+
     private RecyclerView recyclerView;
     private List<Movie> movieList;
 
@@ -61,9 +63,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         movieList = new ArrayList<>();
         mAdapter = new MovieAdapter(this, movieList);
 
+        if (getApplicationContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2);
+            recyclerView.setLayoutManager(layoutManager);
+        } else {
+            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 4);
+            recyclerView.setLayoutManager(layoutManager);
+        }
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2);
-        recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -90,14 +97,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 recyclerView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
                 recyclerView.smoothScrollToPosition(0);
 
-                Toast.makeText(MainActivity.this, "Sorting by most popular", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, R.string.sort_popularity, Toast.LENGTH_SHORT).show();
 
 
             }
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Network Connection Error", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, R.string.internet_connect_error, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -149,12 +156,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 recyclerView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
                 recyclerView.smoothScrollToPosition(0);
 
-                Toast.makeText(MainActivity.this, "Sorting by top rated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, R.string.sort_toprated, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Network Connection Error", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, R.string.internet_connect_error, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -193,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             public void onChanged(@Nullable List<Movie> movies) {
                 movieList = movies;
                 Log.d(TAG, "Showing list of favorite movies");
+                Toast.makeText(getApplicationContext(), R.string.sort_favorites, Toast.LENGTH_SHORT).show();
                 mAdapter.setMovies((ArrayList<Movie>) movies);
             }
         });

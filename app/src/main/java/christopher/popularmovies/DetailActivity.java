@@ -22,6 +22,8 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import christopher.popularmovies.Data.AppExecutors;
 import christopher.popularmovies.Data.Database;
 import christopher.popularmovies.Data.MainViewModel;
@@ -40,16 +42,22 @@ public class DetailActivity extends AppCompatActivity {
 
     private static String TAG = "101";
 
+    @BindView(R.id.poster_image)
     ImageView posterImage;
+    @BindView(R.id.movie_title)
     TextView movieTitle;
+    @BindView(R.id.rating)
     TextView userRating;
+    @BindView(R.id.releasedate)
     TextView releaseDate;
+    @BindView(R.id.overview)
     TextView overview;
     TextView poster;
 
+    @BindView(R.id.favorite_button)
     FloatingActionButton favorite;
 
-
+    int id;
     String title;
     String image;
     String synopsis;
@@ -59,6 +67,7 @@ public class DetailActivity extends AppCompatActivity {
     int idTrailer;
     int idReview;
     int idContentReview;
+
 
     Boolean isFavorite = false;
 
@@ -82,18 +91,14 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        ButterKnife.bind(this);
 
-        posterImage = (ImageView) findViewById(R.id.poster_image);
-        movieTitle = (TextView) findViewById(R.id.movie_title);
-        userRating = (TextView) findViewById(R.id.rating);
-        releaseDate = (TextView) findViewById(R.id.releasedate);
-        overview = (TextView) findViewById(R.id.overview);
 
-        favorite = (FloatingActionButton) findViewById(R.id.favorite_button);
 
 
         Intent intentFromMainActivity = getIntent();
 
+        id = (getIntent().getExtras().getInt("id"));
         title = getIntent().getExtras().getString("title");
         image = getIntent().getExtras().getString("image");
         synopsis = getIntent().getExtras().getString("overview");
@@ -162,7 +167,7 @@ public class DetailActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<TrailerResponse> call, Throwable t) {
-                Toast.makeText(DetailActivity.this, "Network Connection Error", Toast.LENGTH_LONG).show();
+                Toast.makeText(DetailActivity.this, R.string.internet_connect_error, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -193,7 +198,7 @@ public class DetailActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ReviewResponse> call, Throwable t) {
-                Toast.makeText(DetailActivity.this, "Network Connection Error", Toast.LENGTH_LONG).show();
+                Toast.makeText(DetailActivity.this, R.string.internet_connect_error, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -233,36 +238,40 @@ public class DetailActivity extends AppCompatActivity {
 
 
     public void saveToFavorites(View v) {
-        final Movie movie = new Movie();
+
+
+        final Movie movies = new Movie(id, title, image, synopsis, rating, release);
 
 
         if (!isFavorite) {
             favorite.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favoritefilled));
-            Toast.makeText(getApplicationContext(), "Movie being added to favorites", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show();
 
             isFavorite = true;
             AppExecutors.getsInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    movieDatabase.daoAccess().insertMovie(movie);
+                    if (movies == null)
+                        movieDatabase.daoAccess().insertMovie(movies);
                 }
 
             });
 
         } else if (isFavorite = true) {
             favorite.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favorite));
-            Toast.makeText(getApplicationContext(), "Movie being removed from favorites", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show();
 
             isFavorite = false;
             AppExecutors.getsInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    movieDatabase.daoAccess().deleteMovie(movie);
+                    movieDatabase.daoAccess().deleteMovie(movies);
                 }
             });
         }
 
     }
+
 
 }
 

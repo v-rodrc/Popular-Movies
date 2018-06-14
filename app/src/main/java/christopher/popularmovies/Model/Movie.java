@@ -8,16 +8,15 @@ import com.google.gson.annotations.SerializedName;
 @Entity(tableName = "movie_table")
 public class Movie {
 
-
+    @PrimaryKey(autoGenerate = true)
+    @SerializedName("id")
+    private Integer id;
     @SerializedName("poster_path")
     private String posterPath;
     @SerializedName("overview")
     private String overview;
     @SerializedName("release_date")
     private String releaseDate;
-    @PrimaryKey(autoGenerate = true)
-    @SerializedName("id")
-    private Integer id;
     @SerializedName("original_title")
     private String originalTitle;
     @SerializedName("title")
@@ -28,6 +27,15 @@ public class Movie {
     private Integer voteCount;
     @SerializedName("vote_average")
     private Double voteAverage;
+
+    public Movie(int id, String title, String image, String synopsis, Double rating, String release) {
+        this.id = id;
+        this.title = title;
+        this.posterPath = image;
+        this.overview = synopsis;
+        this.voteAverage = rating;
+        this.releaseDate = release;
+    }
 
 
     public String getPosterPath() {

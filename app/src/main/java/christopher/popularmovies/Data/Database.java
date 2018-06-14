@@ -9,7 +9,7 @@ import android.util.Log;
 import christopher.popularmovies.Model.Movie;
 
 
-@android.arch.persistence.room.Database(entities = {Movie.class}, version = 1, exportSchema = false)
+@android.arch.persistence.room.Database(entities = {Movie.class}, version = 2, exportSchema = false)
 
 public abstract class Database extends RoomDatabase {
 
@@ -28,6 +28,7 @@ public abstract class Database extends RoomDatabase {
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                         Database.class, Database.DATABASE_NAME)
                         //.allowMainThreadQueries()
+                        .fallbackToDestructiveMigration()
                         .build();
             }
         }

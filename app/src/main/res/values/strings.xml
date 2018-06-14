@@ -16,4 +16,13 @@
 
     <string name="preference_favorites">Favorites</string>
 
+    <string name="internet_connect_error">Network Connection Error</string>
+    <string name="sort_toprated">Sorting by top rated</string>
+    <string name="sort_popularity">Sorting by popularity</string>
+    <string name="sort_favorites">Showing favorites</string>
+
+    <string name="add_favorite">Movie added to favorites</string>
+    <string name="delete_favorite">Movie removed from favorites</string>
+
+
 </resources>

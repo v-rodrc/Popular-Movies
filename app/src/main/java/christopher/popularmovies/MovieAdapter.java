@@ -93,6 +93,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
                     intent.putExtra("release", movieList.get(clickedPosition).getReleaseDate());
                     intent.putExtra("trailerId", movieList.get(clickedPosition).getId());
                     intent.putExtra("reviewId", movieList.get(clickedPosition).getId());
+                    intent.putExtra("id", movieList.get(clickedPosition).getId());
                     intent.putExtra("reviewContentId", movieList.get(clickedPosition).getId());
 
 
