@@ -1,10 +1,13 @@
 package christopher.popularmovies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 
 public class Settings extends AppCompatActivity {
@@ -16,6 +19,7 @@ public class Settings extends AppCompatActivity {
 
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
+
         }
     }
 
@@ -37,6 +41,28 @@ public class Settings extends AppCompatActivity {
             NavUtils.navigateUpFromSameTask(this);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (Integer.parseInt(android.os.Build.VERSION.SDK) < 5
+                && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+            Log.d("CDA", "onKeyDown Called");
+            onBackPressed();
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void onBackPressed() {
+        Log.d("CDA", "onBackPressed Called");
+        Intent setIntent = new Intent(getApplicationContext(), MainActivity.class);
+        setIntent.addCategory(Intent.CATEGORY_HOME);
+
+        startActivity(setIntent);
+
+        return;
     }
 
 }

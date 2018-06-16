@@ -1,19 +1,18 @@
 package christopher.popularmovies;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,9 +23,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import christopher.popularmovies.Data.AppExecutors;
 import christopher.popularmovies.Data.Database;
-import christopher.popularmovies.Data.MainViewModel;
 import christopher.popularmovies.Data.MovieContract;
 import christopher.popularmovies.Model.Movie;
 import christopher.popularmovies.Model.ReviewModel;
@@ -38,7 +35,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static String TAG = "101";
 
@@ -56,6 +53,9 @@ public class DetailActivity extends AppCompatActivity {
 
     @BindView(R.id.favorite_button)
     FloatingActionButton favorite;
+
+    @BindView(R.id.detailScroll)
+    ScrollView scrollView;
 
     int id;
     String title;
@@ -100,23 +100,27 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent intentFromMainActivity = getIntent();
 
-        id = (getIntent().getExtras().getInt("id"));
-        title = getIntent().getExtras().getString("title");
-        image = getIntent().getExtras().getString("image");
-        synopsis = getIntent().getExtras().getString("overview");
-        rating = getIntent().getExtras().getDouble("average_rating");
-        release = getIntent().getExtras().getString("release");
+        movie = getIntent().getParcelableExtra("movieParcel");
 
-        idTrailer = getIntent().getExtras().getInt("trailerId");
-        idReview = getIntent().getExtras().getInt("reviewId");
-        idContentReview = getIntent().getExtras().getInt("reviewContentId");
+        id = movie.getId();
+        title = movie.getTitle();
+        image = movie.getPosterPath();
+        synopsis = movie.getOverview();
+        rating = movie.getVoteAverage();
+        release = movie.getReleaseDate();
+
+        idTrailer = movie.getId();
+        idReview = movie.getId();
+        idContentReview = movie.getId();
+
+
 
 
         movieDatabase = Database.getInstance(getApplicationContext());
 
 
         Glide.with(this)
-                .load(image)
+                .load("http://image.tmdb.org/t/p/w92" + image)
                 .placeholder(R.drawable.ic_launcher_foreground)
                 .into(posterImage);
 
@@ -125,7 +129,7 @@ public class DetailActivity extends AppCompatActivity {
         userRating.setText(rating.toString() + " / 10");
         overview.setText(synopsis);
 
-        movie = new Movie(id, title, image, synopsis, rating, release);
+        movie = new Movie(id, title, image, synopsis, rating, release, isFavorite);
 
         loadViews();
 
@@ -136,7 +140,6 @@ public class DetailActivity extends AppCompatActivity {
         parseJsonReview();
 
 
-        setUpViewModel();
 
 
 
@@ -223,55 +226,73 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-    private void setUpViewModel() {
-        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-
-        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
-
-
-            @Override
-            public void onChanged(@Nullable List<Movie> movies) {
-                Log.d(TAG, "Updating movies from LiveData in ViewModel");
-                adapter.notifyDataSetChanged();
-            }
-        });
-
-
-    }
-
-
     public void saveToFavorites(View v) {
 
         if (!isFavorite) {
+            movie.setFavorite(true);
             favorite.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favoritefilled));
             Toast.makeText(getApplicationContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show();
 
             isFavorite = true;
-            AppExecutors.getsInstance().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    if (movie == null)
-                        movieDatabase.daoAccess().insertMovie(movie);
-                }
-
-            });
+            new Task2().execute("INSERT");
 
         } else if (isFavorite = true) {
             favorite.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favorite));
             Toast.makeText(getApplicationContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show();
 
             isFavorite = false;
-            AppExecutors.getsInstance().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    movieDatabase.daoAccess().deleteMovie(movie);
-                }
-            });
+            new Task2().execute("DELETE");
         }
 
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+       
+    }
 
+
+    class Task2 extends AsyncTask<String, Void, Void>
+
+    {
+        @Override
+        protected Void doInBackground(String... strings) {
+            if (strings[0].equals("INSERT")) {
+                movieDatabase.daoAccess().insertMovie(movie);
+            } else {
+                movieDatabase.daoAccess().deleteMovie(movie);
+            }
+
+            return null;
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadViews();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        movie = getIntent().getParcelableExtra("movieParcel");
+        outState.putParcelable("parcelDetail", movie);
+        outState.putIntArray("SCROLL_STATE", new int[]{scrollView.getScrollX(), scrollView.getScrollY()});
+        outState.putBoolean("savetoFavoriteState", isFavorite);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            movie = savedInstanceState.getParcelable("parcelDetail");
+            savedInstanceState.getIntArray("SCROLL_STATE");
+            savedInstanceState.getBoolean("saveFavoriteState");
+        }
+    }
 }
 
 

@@ -15,17 +15,17 @@ public class MainViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = MainViewModel.class.getSimpleName();
 
-    private LiveData<List<Movie>> movies;
+    private LiveData<List<Movie>> moviesFavorite;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         Database database = Database.getInstance(this.getApplication());
         Log.d(LOG_TAG, "Actively retreiving the movies from the database");
-        movies = database.daoAccess().getAllMovies();
+        moviesFavorite = database.daoAccess().getAllMovies();
     }
 
-    public LiveData<List<Movie>> getMovies() {
-        return movies;
+    public LiveData<List<Movie>> getFavMovies() {
+        return moviesFavorite;
     }
 }
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private Database movieDatabase;
 
+    private List<Movie> mMoviesFav;
+
+    Movie movie;
+
+    private Parcelable recyclerViewState;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         setUpViewModel();
 
-        sortByFavorite();
+
     }
 
 
@@ -181,30 +188,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (order.equals(this.getString(R.string.preference_popular))) {
 
             parseJson();
+
         } else if (order.equals(this.getString(R.string.preference_rating))) {
 
             parseJsonHighestRated();
         } else if (order.equals(this.getString(R.string.preference_favorites))) {
-            sortByFavorite();
+            setUpViewModel();
         }
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
-    private void sortByFavorite() {
-        final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
-        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
-
-
-            @Override
-            public void onChanged(@Nullable List<Movie> movies) {
-                movieList = movies;
-                Log.d(TAG, "Showing list of favorite movies");
-                Toast.makeText(getApplicationContext(), R.string.sort_favorites, Toast.LENGTH_SHORT).show();
-                mAdapter.setMovies((ArrayList<Movie>) movies);
-            }
-        });
-    }
 
 
     @Override
@@ -217,16 +211,47 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void setUpViewModel() {
         final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
-        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+        viewModel.getFavMovies().observe(this, new Observer<List<Movie>>() {
 
 
             @Override
-            public void onChanged(@Nullable List<Movie> movies) {
-                movieList = movies;
+            public void onChanged(@Nullable List<Movie> moviesFavorite) {
+                mMoviesFav = moviesFavorite;
                 Log.d(TAG, "Updating movies from LiveData in ViewModel");
-                mAdapter.setMovies((ArrayList<Movie>) movies);
+                mAdapter.setMovies((ArrayList<Movie>) moviesFavorite);
             }
         });
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sorting();
+
+        setUpViewModel();
+
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        movie = getIntent().getParcelableExtra("movieParcel");
+        outState.putParcelable("parcelMain", movie);
+        //outState.putParcelable("SAVED_RV_lAYOUT", recyclerView.getLayoutManager().onSaveInstanceState());
+
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            movie = savedInstanceState.getParcelable("parcelMain");
+
+        }
 
     }
 }
