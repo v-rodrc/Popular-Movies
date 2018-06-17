@@ -219,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 mMoviesFav = moviesFavorite;
                 Log.d(TAG, "Updating movies from LiveData in ViewModel");
                 mAdapter.setMovies((ArrayList<Movie>) moviesFavorite);
+                Toast.makeText(getApplicationContext(), "Showing favorite movies", Toast.LENGTH_SHORT).show();
             }
         });
 

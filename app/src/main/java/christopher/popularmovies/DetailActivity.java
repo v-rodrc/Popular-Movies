@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class DetailActivity extends AppCompatActivity {
 
     private static String TAG = "101";
 
@@ -53,6 +55,7 @@ public class DetailActivity extends AppCompatActivity implements SharedPreferenc
 
     @BindView(R.id.favorite_button)
     FloatingActionButton favorite;
+
 
     @BindView(R.id.detailScroll)
     ScrollView scrollView;
@@ -73,6 +76,7 @@ public class DetailActivity extends AppCompatActivity implements SharedPreferenc
 
     Movie movie;
 
+    SharedPreferences sharedPreferences;
 
     private List<Movie> movieList;
 
@@ -114,7 +118,7 @@ public class DetailActivity extends AppCompatActivity implements SharedPreferenc
         idContentReview = movie.getId();
 
 
-
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         movieDatabase = Database.getInstance(getApplicationContext());
 
@@ -204,6 +208,7 @@ public class DetailActivity extends AppCompatActivity implements SharedPreferenc
 
             @Override
             public void onFailure(Call<ReviewResponse> call, Throwable t) {
+
                 Toast.makeText(DetailActivity.this, R.string.internet_connect_error, Toast.LENGTH_LONG).show();
             }
         });
@@ -228,27 +233,38 @@ public class DetailActivity extends AppCompatActivity implements SharedPreferenc
 
     public void saveToFavorites(View v) {
 
+
+// if it is not favorite(false) then update movie object with movie class setfavorite to true, toast, set image to filled heart, update boolean to true
+        //insert into db, save boolean into shared preferences
+
         if (!isFavorite) {
             movie.setFavorite(true);
+            Snackbar.make(v, R.string.add_favorite, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
             favorite.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favoritefilled));
-            Toast.makeText(getApplicationContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show();
 
             isFavorite = true;
             new Task2().execute("INSERT");
+            SharedPreferences.Editor editor = getSharedPreferences("com.christopher.popularmovies.DetailActivity", MODE_PRIVATE).edit();
+            editor.putBoolean("add_favorite", isFavorite);
+            editor.commit();
 
-        } else if (isFavorite = true) {
+// otherwise update movie object with movie class setfavorite to false, toast, set image to filled heart, update boolean to false
+            //delete from db, save boolean into shared preferences
+
+        } else {
+            movie.setFavorite(false);
+
+            Snackbar.make(v, R.string.delete_favorite, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
             favorite.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.favorite));
-            Toast.makeText(getApplicationContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show();
-
             isFavorite = false;
             new Task2().execute("DELETE");
+            SharedPreferences.Editor editor = getSharedPreferences("com.christopher.popularmovies.DetailActivity", MODE_PRIVATE).edit();
+            editor.putBoolean("delete_favorite", isFavorite);
+            editor.commit();
         }
 
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-       
     }
 
 
@@ -259,8 +275,10 @@ public class DetailActivity extends AppCompatActivity implements SharedPreferenc
         protected Void doInBackground(String... strings) {
             if (strings[0].equals("INSERT")) {
                 movieDatabase.daoAccess().insertMovie(movie);
+
             } else {
                 movieDatabase.daoAccess().deleteMovie(movie);
+
             }
 
             return null;
@@ -293,6 +311,8 @@ public class DetailActivity extends AppCompatActivity implements SharedPreferenc
             savedInstanceState.getBoolean("saveFavoriteState");
         }
     }
+
+
 }
 
 

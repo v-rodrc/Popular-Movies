@@ -50,11 +50,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
     public void onBindViewHolder(final MovieAdapter.NumberViewHolder holder, int position) {
 
 
-        String poster = "https://image.tmdb.org/t/p/w500" + movieList.get(position).getPosterPath();
+        String poster = movieList.get(position).getPosterPath();
 
 
         Glide.with(mContext)
-                .load(poster)
+                .load("https://image.tmdb.org/t/p/w500" + poster)
                 .placeholder(R.drawable.ic_launcher_foreground)
                 .into(holder.posterthumbnail);
     }
