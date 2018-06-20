@@ -21,7 +21,7 @@ public class MainViewModel extends AndroidViewModel {
 
     public MainViewModel(@NonNull Application application) {
         super(application);
-        Database database = Database.getInstance(this.getApplication());
+        database = Database.getInstance(this.getApplication());
         Log.d(LOG_TAG, "Actively retrieving the movies from the database");
         movies = database.daoAccess().getAllMovies();
     }

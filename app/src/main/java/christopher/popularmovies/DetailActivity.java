@@ -130,7 +130,7 @@ public class DetailActivity extends AppCompatActivity {
 
 
         Glide.with(this)
-                .load("http://image.tmdb.org/t/p/w92" + image)
+                .load("http://image.tmdb.org/t/p/w500" + image)
                 .placeholder(R.drawable.ic_launcher_foreground)
                 .into(posterImage);
 
