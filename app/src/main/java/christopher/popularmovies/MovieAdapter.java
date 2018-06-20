@@ -24,6 +24,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
 
     private List<Movie> movieList;
 
+
     public MovieAdapter(Context mContext, List<Movie> movieList) {
 
         this.mContext = mContext;
@@ -96,7 +97,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
                     intent.putExtra("id", movieList.get(clickedPosition).getId());
                     intent.putExtra("reviewContentId", movieList.get(clickedPosition).getId());*/
 
-
+// make check to see if current movie is in database or not
                     mContext.startActivity(intent);
 
                 }
@@ -109,4 +110,5 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
         movieList = movieEntries;
         notifyDataSetChanged();
     }
+
 }

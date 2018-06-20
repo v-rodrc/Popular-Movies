@@ -1,17 +1,21 @@
 package christopher.popularmovies;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -26,6 +30,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import christopher.popularmovies.Data.Database;
+import christopher.popularmovies.Data.MainViewModel;
 import christopher.popularmovies.Data.MovieContract;
 import christopher.popularmovies.Model.Movie;
 import christopher.popularmovies.Model.ReviewModel;
@@ -113,6 +118,7 @@ public class DetailActivity extends AppCompatActivity {
         rating = movie.getVoteAverage();
         release = movie.getReleaseDate();
 
+
         idTrailer = movie.getId();
         idReview = movie.getId();
         idContentReview = movie.getId();
@@ -143,7 +149,7 @@ public class DetailActivity extends AppCompatActivity {
 
         parseJsonReview();
 
-
+        setUpViewModel();
 
 
 
@@ -153,6 +159,18 @@ public class DetailActivity extends AppCompatActivity {
     private void loadViews() {
         trailerModelList = new ArrayList<>();
         adapter = new TrailerAdapter(this, trailerModelList);
+
+        final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        viewModel.getMovieById(movie.getId()).observe(this, new Observer<Movie>() {
+
+            @Override
+            public void onChanged(@Nullable Movie movie) {
+                if (movie != null && movie.isFavorite()) {
+                    favorite.setImageResource(R.drawable.favoritefilled);
+                }
+            }
+        });
 
         trailerRecyclerView = (RecyclerView) (findViewById(R.id.rv_trailers));
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -247,7 +265,7 @@ public class DetailActivity extends AppCompatActivity {
             new Task2().execute("INSERT");
             SharedPreferences.Editor editor = getSharedPreferences("com.christopher.popularmovies.DetailActivity", MODE_PRIVATE).edit();
             editor.putBoolean("add_favorite", isFavorite);
-            editor.commit();
+            editor.apply();
 
 // otherwise update movie object with movie class setfavorite to false, toast, set image to filled heart, update boolean to false
             //delete from db, save boolean into shared preferences
@@ -262,8 +280,25 @@ public class DetailActivity extends AppCompatActivity {
             new Task2().execute("DELETE");
             SharedPreferences.Editor editor = getSharedPreferences("com.christopher.popularmovies.DetailActivity", MODE_PRIVATE).edit();
             editor.putBoolean("delete_favorite", isFavorite);
-            editor.commit();
+            editor.apply();
         }
+
+    }
+
+
+    private void setUpViewModel() {
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+
+
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                Log.d(TAG, "Updating movies from LiveData in ViewModel");
+                adapter.notifyDataSetChanged();
+            }
+        });
+
 
     }
 

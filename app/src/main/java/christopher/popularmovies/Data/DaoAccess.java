@@ -19,6 +19,9 @@ public interface DaoAccess {
     @Query("SELECT * FROM movie_table ORDER BY popularity")
     LiveData<List<Movie>> getAllMovies();
 
+    @Query("SELECT * FROM movie_table WHERE id IS :movieId")
+    LiveData<Movie> getMovie(Integer movieId);
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertMovie(Movie movies);

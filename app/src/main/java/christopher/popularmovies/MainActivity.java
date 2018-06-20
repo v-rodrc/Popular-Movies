@@ -211,20 +211,33 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void setUpViewModel() {
         final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
-        viewModel.getFavMovies().observe(this, new Observer<List<Movie>>() {
+        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
 
 
             @Override
-            public void onChanged(@Nullable List<Movie> moviesFavorite) {
-                mMoviesFav = moviesFavorite;
+            public void onChanged(@Nullable List<Movie> movies) {
+                movieList = movies;
                 Log.d(TAG, "Updating movies from LiveData in ViewModel");
-                mAdapter.setMovies((ArrayList<Movie>) moviesFavorite);
-                Toast.makeText(getApplicationContext(), "Showing favorite movies", Toast.LENGTH_SHORT).show();
+                mAdapter.setMovies((ArrayList<Movie>) movies);
             }
         });
 
     }
 
+    private void sortByFavorite() {
+        final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+
+
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                movieList = movies;
+                Log.d(TAG, "Showing list of favorite movies");
+                mAdapter.setMovies((ArrayList<Movie>) movies);
+            }
+        });
+    }
 
     @Override
     protected void onResume() {
@@ -233,8 +246,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         setUpViewModel();
 
-
+        sortByFavorite();
     }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
