@@ -88,16 +88,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.NumberViewHo
 
                     Intent intent = new Intent(mContext, DetailActivity.class);
                     intent.putExtra("movieParcel", clickedItem);
-                    /*intent.putExtra("image", "https://image.tmdb.org/t/p/w500" + movieList.get(clickedPosition).getPosterPath());
-                    intent.putExtra("overview", movieList.get(clickedPosition).getOverview());
-                    intent.putExtra("average_rating", movieList.get(clickedPosition).getVoteAverage());
-                    intent.putExtra("release", movieList.get(clickedPosition).getReleaseDate());
-                    intent.putExtra("trailerId", movieList.get(clickedPosition).getId());
-                    intent.putExtra("reviewId", movieList.get(clickedPosition).getId());
-                    intent.putExtra("id", movieList.get(clickedPosition).getId());
-                    intent.putExtra("reviewContentId", movieList.get(clickedPosition).getId());*/
 
-// make check to see if current movie is in database or not
                     mContext.startActivity(intent);
 
                 }

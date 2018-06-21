@@ -130,7 +130,7 @@ public class DetailActivity extends AppCompatActivity {
 
 
         Glide.with(this)
-                .load("http://image.tmdb.org/t/p/w500" + image)
+                .load("http://image.tmdb.org/t/p/w185" + image)
                 .placeholder(R.drawable.ic_launcher_foreground)
                 .into(posterImage);
 
@@ -157,6 +157,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void loadViews() {
+
         trailerModelList = new ArrayList<>();
         adapter = new TrailerAdapter(this, trailerModelList);
 
@@ -166,8 +167,10 @@ public class DetailActivity extends AppCompatActivity {
 
             @Override
             public void onChanged(@Nullable Movie movie) {
+
                 if (movie != null && movie.isFavorite()) {
                     favorite.setImageResource(R.drawable.favoritefilled);
+                    isFavorite = true;
                 }
             }
         });
@@ -324,7 +327,8 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadViews();
+
+
     }
 
     @Override
@@ -342,8 +346,15 @@ public class DetailActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
             movie = savedInstanceState.getParcelable("parcelDetail");
-            savedInstanceState.getIntArray("SCROLL_STATE");
+            final int[] scrollViewPosition = savedInstanceState.getIntArray("SCROLL_STATE");
             savedInstanceState.getBoolean("saveFavoriteState");
+            scrollView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    scrollView.scrollTo(scrollViewPosition[0], scrollViewPosition[1]);
+                }
+            }, 300);
+
         }
     }
 

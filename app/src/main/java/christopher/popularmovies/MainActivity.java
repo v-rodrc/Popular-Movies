@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private Parcelable recyclerViewState;
 
+    RecyclerView.LayoutManager layoutManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         loadViews();
         sorting();
 
-        setUpViewModel();
+
 
 
     }
@@ -71,10 +73,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mAdapter = new MovieAdapter(this, movieList);
 
         if (getApplicationContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2);
+            layoutManager = new GridLayoutManager(MainActivity.this, 2);
             recyclerView.setLayoutManager(layoutManager);
         } else {
-            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 4);
+            layoutManager = new GridLayoutManager(MainActivity.this, 2);
             recyclerView.setLayoutManager(layoutManager);
         }
 
@@ -193,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
             parseJsonHighestRated();
         } else if (order.equals(this.getString(R.string.preference_favorites))) {
-            setUpViewModel();
+            sortByFavorite();
         }
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
@@ -208,21 +210,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     }
 
-    private void setUpViewModel() {
-        final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
-        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
-
-
-            @Override
-            public void onChanged(@Nullable List<Movie> movies) {
-                movieList = movies;
-                Log.d(TAG, "Updating movies from LiveData in ViewModel");
-                mAdapter.setMovies((ArrayList<Movie>) movies);
-            }
-        });
-
-    }
 
     private void sortByFavorite() {
         final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -242,19 +230,24 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onResume() {
         super.onResume();
-        sorting();
+        if (layoutManager != null) {
+            layoutManager.onRestoreInstanceState(recyclerViewState);
+        }
 
-        setUpViewModel();
 
-        sortByFavorite();
+
     }
 
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        movie = getIntent().getParcelableExtra("movieParcel");
-        outState.putParcelable("parcelMain", movie);
+
+        recyclerViewState = getIntent().getParcelableExtra("movieParcel");
+
+        recyclerViewState = layoutManager.onSaveInstanceState();
+
+        outState.putParcelable("parcelMain", recyclerViewState);
         //outState.putParcelable("SAVED_RV_lAYOUT", recyclerView.getLayoutManager().onSaveInstanceState());
 
 
@@ -264,9 +257,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            movie = savedInstanceState.getParcelable("parcelMain");
+            recyclerViewState = savedInstanceState.getParcelable("parcelMain");
 
         }
+
 
     }
 }

@@ -27,12 +27,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/detailScroll">
 
             <LinearLayout
@@ -43,9 +43,9 @@
 
                 <ImageView
                     android:id="@+id/poster_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
+                    android:layout_width="250dp"
+                    android:layout_height="270dp"
+                    android:adjustViewBounds="true" />
 
                 <TextView
                     android:id="@+id/movie_title"
@@ -80,8 +80,9 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:background="@android:color/darker_gray" />
+                    android:layout_height="5dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginTop="20dp" />
 
 
                 <TextView
@@ -89,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/LabelsStyle"
-                    android:text="Trailer"
+                    android:text="Trailers"
                     android:layout_marginTop="20dp" />
 
 
@@ -101,8 +102,9 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:background="@android:color/darker_gray" />
+                    android:layout_height="5dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginTop="20dp" />
 
 
                 <TextView
