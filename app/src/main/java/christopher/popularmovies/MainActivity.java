@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     Movie movie;
 
-    private Parcelable recyclerViewState;
+    private int recyclerViewState;
 
     RecyclerView.LayoutManager layoutManager;
 
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             layoutManager = new GridLayoutManager(MainActivity.this, 2);
             recyclerView.setLayoutManager(layoutManager);
         } else {
-            layoutManager = new GridLayoutManager(MainActivity.this, 2);
+            layoutManager = new GridLayoutManager(MainActivity.this, 4);
             recyclerView.setLayoutManager(layoutManager);
         }
 
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
                 recyclerView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
-                recyclerView.smoothScrollToPosition(0);
+                recyclerView.scrollToPosition(recyclerViewState);
 
                 Toast.makeText(MainActivity.this, R.string.sort_popularity, Toast.LENGTH_SHORT).show();
 
@@ -163,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
                 recyclerView.setAdapter(new MovieAdapter(getApplicationContext(), movies));
-                recyclerView.smoothScrollToPosition(0);
+                recyclerView.scrollToPosition(recyclerViewState);
 
                 Toast.makeText(MainActivity.this, R.string.sort_toprated, Toast.LENGTH_SHORT).show();
             }
@@ -223,6 +222,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 movieList = movies;
                 Log.d(TAG, "Showing list of favorite movies");
                 mAdapter.setMovies((ArrayList<Movie>) movies);
+                recyclerView.scrollToPosition(recyclerViewState);
+                Toast.makeText(getApplicationContext(), R.string.sort_favorites, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -230,9 +231,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onResume() {
         super.onResume();
-        if (layoutManager != null) {
-            layoutManager.onRestoreInstanceState(recyclerViewState);
-        }
+
 
 
 
@@ -243,12 +242,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        recyclerViewState = getIntent().getParcelableExtra("movieParcel");
+        recyclerViewState = ((GridLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
 
-        recyclerViewState = layoutManager.onSaveInstanceState();
+        outState.putInt("position", recyclerViewState);
 
-        outState.putParcelable("parcelMain", recyclerViewState);
-        //outState.putParcelable("SAVED_RV_lAYOUT", recyclerView.getLayoutManager().onSaveInstanceState());
 
 
     }
@@ -256,10 +253,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null) {
-            recyclerViewState = savedInstanceState.getParcelable("parcelMain");
 
-        }
+        recyclerViewState = savedInstanceState.getInt("position");
+
+
 
 
     }
