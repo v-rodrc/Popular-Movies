@@ -3,12 +3,14 @@ package christopher.popularmovies;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
 
 public class Settings extends AppCompatActivity {
     @Override

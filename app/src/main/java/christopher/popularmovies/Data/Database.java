@@ -1,15 +1,17 @@
 package christopher.popularmovies.Data;
 
 
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
+
 import android.content.Context;
 import android.util.Log;
+
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 
 import christopher.popularmovies.Model.Movie;
 
 
-@android.arch.persistence.room.Database(entities = {Movie.class}, version = 3, exportSchema = false)
+@androidx.room.Database(entities = {Movie.class}, version = 3, exportSchema = false)
 
 public abstract class Database extends RoomDatabase {
 
